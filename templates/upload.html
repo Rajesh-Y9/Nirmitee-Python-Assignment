@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tally XML to Excel Converter</title>
+    <style>
+        :root {
+            --primary-color: #4a6da7;
+            --primary-hover: #3a5d97;
+            --border-color: #dee2e6;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --text-color: #343a40;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            flex: 1;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .upload-container {
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            margin-bottom: 1.5rem;
+        }
+        
+        .file-input {
+            margin-bottom: 1rem;
+        }
+        
+        .file-name {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            padding: 0.5rem;
+            background-color: white;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: block;
+            width: 100%;
+            max-width: 200px;
+            margin: 0 auto;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        .btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .error-message {
+            color: var(--danger-color);
+            text-align: center;
+            margin-top: 1rem;
+            display: none;
+        }
+        
+        .success-message {
+            color: var(--success-color);
+            text-align: center;
+            margin-top: 1rem;
+            display: none;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Tally XML to Excel Converter</h1>
+            <p>Upload your Tally XML file to convert it to Excel format</p>
+        </header>
+        
+        <form id="uploadForm" action="/convert" method="POST" enctype="multipart/form-data">
+            <div class="upload-container">
+                <label for="fileInput">Select XML file:</label>
+                <input type="file" id="fileInput" name="file" class="file-input" accept=".xml" required>
+                <div class="file-name" id="fileName"></div>
+            </div>
+            
+            <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage"></div>
+            
+            <button type="submit" class="btn" id="convertBtn" disabled>
+                Convert to Excel
+            </button>
+        </form>
+        
+    </div>
+    
+    
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('fileInput');
+            const fileName = document.getElementById('fileName');
+            const convertBtn = document.getElementById('convertBtn');
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            
+            fileInput.addEventListener('change', function() {
+                handleFile(this.files[0]);
+            });
+            
+            function handleFile(file) {
+                hideMessages();
+                
+                if (!file) {
+                    showError('No file selected');
+                    resetFileInput();
+                    return;
+                }
+                
+                if (!file.name.toLowerCase().endsWith('.xml')) {
+                    showError('Please select an XML file');
+                    resetFileInput();
+                    return;
+                }
+                
+                
+                
+                fileName.textContent = file.name;
+                fileName.style.display = 'block';
+                convertBtn.disabled = false;
+                
+                showSuccess('File selected successfully');
+            }
+            
+            function resetFileInput() {
+                fileInput.value = '';
+                fileName.style.display = 'none';
+                convertBtn.disabled = true;
+            }
+            
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorMessage.style.display = 'block';
+                successMessage.style.display = 'none';
+            }
+            
+            function showSuccess(message) {
+                successMessage.textContent = message;
+                successMessage.style.display = 'block';
+                errorMessage.style.display = 'none';
+            }
+            
+            function hideMessages() {
+                errorMessage.style.display = 'none';
+                successMessage.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
